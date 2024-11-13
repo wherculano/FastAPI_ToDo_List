@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "todo-list"
+version = "0.1.0"
+description = ""
+authors = ["Wagner Herculano <wagherculano@hotmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "3.13.*"
+fastapi = {extras = ["standard"], version = "^0.115.5"}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -14,15 +14,15 @@ def test_deve_retornar_hello_world_e_ok(client):
 
 
 def test_create_user(client):
-    response = client.post('/users/', json={'username': 'Wagner', 'email': 'wag@herculano.com', 'password': '12334'})
+    response = client.post('/users/', json={'username': 'Wagner', 'email': 'test@test.com', 'password': 'password'})
     assert response.status_code == HTTPStatus.CREATED
-    assert response.json() == {'username': 'Wagner', 'email': 'wag@herculano.com', 'id': 1}
+    assert response.json() == {'username': 'Wagner', 'email': 'test@test.com', 'id': 1}
 
 
 def test_get_user(client):
     response = client.get('/users/1')
     assert response.status_code == HTTPStatus.OK
-    assert response.json() == {'username': 'Wagner', 'email': 'wag@herculano.com', 'id': 1}
+    assert response.json() == {'username': 'Wagner', 'email': 'test@test.com', 'id': 1}
 
 
 def test_get_user_not_found(client):
@@ -35,15 +35,15 @@ def test_get_users(client):
     response = client.get('/users/')
     assert response.status_code == HTTPStatus.OK
     # erroneamente, este teste depende do teste anterior (que cadastra o user)
-    assert response.json() == {'users': [{'username': 'Wagner', 'email': 'wag@herculano.com', 'id': 1}]}
+    assert response.json() == {'users': [{'username': 'Wagner', 'email': 'test@test.com', 'id': 1}]}
 
 
 def test_update_user(client):
     response = client.put(
-        '/users/1', json={'username': 'WagHerculano', 'email': 'wag@herculano.com', 'password': '12334'}
+        '/users/1', json={'username': 'WagHerculano', 'email': 'test@test.com', 'password': 'password'}
     )
     assert response.status_code == HTTPStatus.OK
-    assert response.json() == {'username': 'WagHerculano', 'email': 'wag@herculano.com', 'id': 1}
+    assert response.json() == {'username': 'WagHerculano', 'email': 'test@test.com', 'id': 1}
 
 
 def test_update_user_not_found(client):

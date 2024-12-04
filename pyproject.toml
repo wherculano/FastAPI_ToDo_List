@@ -42,7 +42,7 @@ addopts = '-p no:warnings'
 [tool.taskipy.tasks]
 lint = 'ruff check .; ruff check . --diff'
 format = 'ruff check . --fix; ruff format .'
-run = 'fastapi dev todo_list/app.py'
+run = 'fastapi dev todo_list/app.py --host 0.0.0.0'
 pre_test = 'task lint'
 test = 'pytest -s -x --cov=todo_list -vv'
 post_test = 'coverage html'

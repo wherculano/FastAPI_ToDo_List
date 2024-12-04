@@ -7,6 +7,7 @@ from sqlalchemy import select
 from todo_list.database import get_session
 from todo_list.models import User
 from todo_list.schemas import Message, UserList, UserPublic, UserSchema
+from todo_list.security import get_password_hash
 
 app = FastAPI()
 fake_db = []  # apenas para testes iniciais do projeto
@@ -46,7 +47,7 @@ def create_user(user: UserSchema, session=Depends(get_session)):
                 detail='Email already exists',
             )
 
-    db_user = User(username=user.username, password=user.password, email=user.email)
+    db_user = User(username=user.username, password=get_password_hash(user.password), email=user.email)
 
     session.add(db_user)
     session.commit()
@@ -76,7 +77,7 @@ def update_user(user_id: int, user: UserSchema, session=Depends(get_session)):
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='User not found')
 
     db_user.username = user.username
-    db_user.password = user.password
+    db_user.password = get_password_hash(user.password)
     db_user.email = user.email
 
     session.add(db_user)

@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from http import HTTPStatus
+from typing import Annotated
 
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
@@ -20,6 +21,8 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='auth/token')
 pwd_context = PasswordHash.recommended()
 
+T_Session = Annotated[Session, Depends(get_session)]
+
 
 def get_password_hash(password: str):
     return pwd_context.hash(password)
@@ -37,7 +40,7 @@ def create_access_token(data: dict):
     return encoded_jwt
 
 
-def get_current_user(session: Session = Depends(get_session), token: str = Depends(oauth2_scheme)):
+def get_current_user(session: T_Session, token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
         status_code=HTTPStatus.UNAUTHORIZED,
         detail='Could not validate credentials',

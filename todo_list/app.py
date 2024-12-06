@@ -14,3 +14,6 @@ app.include_router(html_example.router)
 @app.get('/', response_model=Message, status_code=HTTPStatus.OK)
 def read_root():
     return {'message': 'Olá Mundo!'}
+
+
+# parei no minuto 26:15 da live

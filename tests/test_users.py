@@ -51,9 +51,9 @@ def test_update_user(client, user, token):
     assert response.json() == {'username': 'WagHerculano', 'email': 'test@test.com', 'id': 1}
 
 
-def test_update_user_not_found(client, user, token):
+def test_update_user_not_found(client, another_user, token):
     response = client.put(
-        '/users/10',
+        f'/users/{another_user.id}',
         json={'username': 'Pizza', 'email': 'pizza@lover.com', 'password': '123'},
         headers={'Authorization': f'Bearer {token}'},
     )
@@ -70,9 +70,9 @@ def test_delete_user(client, user, token):
     assert response.json() == {'message': 'User deleted'}
 
 
-def test_delete_user_not_found(client, token):
+def test_delete_user_not_found(client, another_user, token):
     response = client.delete(
-        '/users/10',
+        f'/users/{another_user.id}',
         headers={'Authorization': f'Bearer {token}'},
     )
     assert response.status_code == HTTPStatus.FORBIDDEN

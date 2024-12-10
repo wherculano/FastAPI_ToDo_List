@@ -57,7 +57,7 @@ def test_update_user_not_found(client, user, token):
         json={'username': 'Pizza', 'email': 'pizza@lover.com', 'password': '123'},
         headers={'Authorization': f'Bearer {token}'},
     )
-    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert response.status_code == HTTPStatus.FORBIDDEN
     assert response.json() == {'detail': 'Not enough permission'}
 
 
@@ -75,5 +75,5 @@ def test_delete_user_not_found(client, token):
         '/users/10',
         headers={'Authorization': f'Bearer {token}'},
     )
-    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert response.status_code == HTTPStatus.FORBIDDEN
     assert response.json() == {'detail': 'Not enough permission'}

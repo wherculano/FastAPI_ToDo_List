@@ -57,7 +57,7 @@ def create_user(user: UserSchema, session: T_Session):
 @router.put('/{user_id}', response_model=UserPublic)
 def update_user(user_id: int, user: UserSchema, session: T_Session, current_user: T_CurrentUser):
     if current_user.id != user_id:
-        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail='Not enough permission')
+        raise HTTPException(status_code=HTTPStatus.FORBIDDEN, detail='Not enough permission')
     current_user.username = user.username
     current_user.password = get_password_hash(user.password)
     current_user.email = user.email
@@ -71,7 +71,7 @@ def update_user(user_id: int, user: UserSchema, session: T_Session, current_user
 @router.delete('/{user_id}', response_model=Message)
 def delete_user(user_id: int, session: T_Session, current_user: T_CurrentUser):
     if current_user.id != user_id:
-        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail='Not enough permission')
+        raise HTTPException(status_code=HTTPStatus.FORBIDDEN, detail='Not enough permission')
     session.delete(current_user)
     session.commit()
 

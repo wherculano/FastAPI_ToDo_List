@@ -134,10 +134,41 @@ def test_delete_todo_error(client, token):
     assert response.json() == {'detail': 'Task not found.'}
 
 
-def test_create_todo(client, token):
-    response = client.post(
-        '/todos',
+def test_create_todo(client, token, mock_db_time):
+    with mock_db_time(model=ToDo) as time:
+        response = client.post(
+            '/todos',
+            headers={'Authorization': f'Bearer {token}'},
+            json={'title': 'Test ToDo', 'description': 'Test ToDo description', 'state': 'draft'},
+        )
+    assert response.json() == {
+        'id': 1,
+        'title': 'Test ToDo',
+        'description': 'Test ToDo description',
+        'state': 'draft',
+        'created_at': time.isoformat(),
+        'updated_at': time.isoformat(),
+    }
+
+
+def test_list_todos_shoud_return_all_expected_fields(session, client, user, token, mock_db_time):
+    with mock_db_time(model=ToDo) as time:
+        todo = ToDoFactory.create(user_id=user.id)
+        session.add(todo)
+        session.commit()
+
+    session.refresh(todo)
+    response = client.get(
+        '/todos/',
         headers={'Authorization': f'Bearer {token}'},
-        json={'title': 'Test ToDo', 'description': 'Test ToDo description', 'state': 'draft'},
     )
-    assert response.json() == {'id': 1, 'title': 'Test ToDo', 'description': 'Test ToDo description', 'state': 'draft'}
+    assert response.json()['todos'] == [
+        {
+            'id': todo.id,
+            'title': todo.title,
+            'description': todo.description,
+            'state': todo.state,
+            'created_at': time.isoformat(),
+            'updated_at': time.isoformat(),
+        }
+    ]

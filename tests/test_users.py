@@ -61,6 +61,21 @@ def test_update_user_not_found(client, another_user, token):
     assert response.json() == {'detail': 'Not enough permission'}
 
 
+def test_update_integrity_error(client, user, another_user, token):
+    response_update = client.put(
+        f'/users/{user.id}',
+        headers={'Authorization': f'Bearer {token}'},
+        json={
+            'username': another_user.username,
+            'email': 'email@example.com',
+            'password': 'new_password_test',
+        },
+    )
+
+    assert response_update.status_code == HTTPStatus.CONFLICT
+    assert response_update.json() == {'detail': 'Username or Email already exists'}
+
+
 def test_delete_user(client, user, token):
     response = client.delete(
         f'/users/{user.id}',

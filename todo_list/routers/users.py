@@ -3,11 +3,17 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from todo_list.database import get_session
 from todo_list.models import User
-from todo_list.schemas import Message, UserList, UserPublic, UserSchema
+from todo_list.schemas import (
+    Message,
+    UserList,
+    UserPublic,
+    UserSchema,
+)
 from todo_list.security import get_current_user, get_password_hash
 
 router = APIRouter(prefix='/users', tags=['users'])
@@ -55,17 +61,29 @@ def create_user(user: UserSchema, session: T_Session):
 
 
 @router.put('/{user_id}', response_model=UserPublic)
-def update_user(user_id: int, user: UserSchema, session: T_Session, current_user: T_CurrentUser):
+def update_user(
+    user_id: int,
+    user: UserSchema,
+    session: T_Session,
+    current_user: T_CurrentUser,
+):
     if current_user.id != user_id:
         raise HTTPException(status_code=HTTPStatus.FORBIDDEN, detail='Not enough permission')
-    current_user.username = user.username
-    current_user.password = get_password_hash(user.password)
-    current_user.email = user.email
 
-    session.commit()
-    session.refresh(current_user)
+    try:
+        current_user.username = user.username
+        current_user.password = get_password_hash(user.password)
+        current_user.email = user.email
+        session.commit()
+        session.refresh(current_user)
 
-    return current_user
+        return current_user
+
+    except IntegrityError:
+        raise HTTPException(
+            status_code=HTTPStatus.CONFLICT,
+            detail='Username or Email already exists',
+        )
 
 
 @router.delete('/{user_id}', response_model=Message)

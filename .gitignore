@@ -145,3 +145,6 @@ dev.sqlite3
 .mypy_cache/
 .dmypy.json
 dmypy.json
+
+# Nektos ACT
+bin/act
